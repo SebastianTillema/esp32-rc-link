@@ -19,4 +19,4 @@ void pwm_init(void);
 // Set duty cycle in microseconds
 void set_pwm_pulsewidth_us(uint32_t channel, uint32_t pulse_width_us);
 
-#endif // PWM_H
+#endif
