@@ -1,5 +1,5 @@
-#ifndef COMMUNICATION_H
-#define COMMUNICATION_H
+#ifndef COMM_H
+#define COMM_H
 
 #include "esp_now.h"
 

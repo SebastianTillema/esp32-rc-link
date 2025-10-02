@@ -3,7 +3,7 @@ idf_component_register(
         "receiver/receiver.c"
         "receiver/pwm.c"
         "transmitter/transmitter.c"
-        "common/communication.c"
+        "common/comm.c"
     INCLUDE_DIRS
         "receiver"
         "common"
