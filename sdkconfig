@@ -915,6 +915,31 @@ CONFIG_EFUSE_MAX_BLK_LEN=192
 # end of eFuse Bit Manager
 
 #
+# ADC and ADC Calibration
+#
+# default:
+# CONFIG_ADC_ONESHOT_CTRL_FUNC_IN_IRAM is not set
+# default:
+# CONFIG_ADC_CONTINUOUS_ISR_IRAM_SAFE is not set
+
+#
+# ADC Calibration Configurations
+#
+# default:
+CONFIG_ADC_CALI_EFUSE_TP_ENABLE=y
+# default:
+CONFIG_ADC_CALI_EFUSE_VREF_ENABLE=y
+# default:
+CONFIG_ADC_CALI_LUT_ENABLE=y
+# end of ADC Calibration Configurations
+
+# default:
+CONFIG_ADC_DISABLE_DAC_OUTPUT=y
+# default:
+# CONFIG_ADC_ENABLE_DEBUG_LOG is not set
+# end of ADC and ADC Calibration
+
+#
 # Wireless Coexistence
 #
 # default:
@@ -2856,6 +2881,10 @@ CONFIG_STACK_CHECK_NONE=y
 # CONFIG_STACK_CHECK_STRONG is not set
 # CONFIG_STACK_CHECK_ALL is not set
 # CONFIG_WARN_WRITE_STRINGS is not set
+CONFIG_ADC_CAL_EFUSE_TP_ENABLE=y
+CONFIG_ADC_CAL_EFUSE_VREF_ENABLE=y
+CONFIG_ADC_CAL_LUT_ENABLE=y
+CONFIG_ADC_DISABLE_DAC=y
 # CONFIG_GPTIMER_ISR_IRAM_SAFE is not set
 # CONFIG_MCPWM_ISR_IRAM_SAFE is not set
 # CONFIG_EVENT_LOOP_PROFILING is not set

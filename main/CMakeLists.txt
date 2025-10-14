@@ -7,11 +7,12 @@ idf_component_register(
     INCLUDE_DIRS
         "receiver"
         "common"
-    PRIV_REQUIRES
+    REQUIRES
         driver
         esp_wifi
         esp_netif
         nvs_flash
+        esp_adc
 )
 
 set(DEFAULT_APP "receiver" CACHE STRING "Choose app: transmitter or receiver")
