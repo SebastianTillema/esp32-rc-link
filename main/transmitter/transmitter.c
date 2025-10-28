@@ -4,15 +4,19 @@
 #include "esp_log.h"
 #include "comm.h"
 #include "packet.h"
+#include "input_processing.h"
 
-#define POT_CHANNEL ADC_CHANNEL_0
+#define UPDATE_FREQUENCY_MS 50
+
 #define ADC_UNIT ADC_UNIT_1
+#define STEERING_CHANNEL ADC_CHANNEL_3
+#define THROTTLE_CHANNEL ADC_CHANNEL_0
 
 static const char *TAG = "TX";
 
 static void on_send(const esp_now_send_info_t *info, esp_now_send_status_t status)
 {
-    ESP_LOGI(TAG, "Transmitted status: %.*s", status);
+    // ESP_LOGI(TAG, "Transmitted status: %.*s", status);
 }
 
 static void on_recv(const esp_now_recv_info_t *info, const uint8_t *data, int len)
@@ -22,9 +26,9 @@ static void on_recv(const esp_now_recv_info_t *info, const uint8_t *data, int le
 
 void app_main(void)
 {
-    uint8_t broadcast_mac[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    uint8_t receiver_mac[] = {0x78, 0x21, 0x84, 0x80, 0x4c, 0x64};
     comm_init(on_send, on_recv);
-    comm_add_peer(broadcast_mac);
+    comm_add_peer(receiver_mac);
 
     adc_oneshot_unit_handle_t adc_handle;
     adc_oneshot_unit_init_cfg_t init_config = {
@@ -36,19 +40,29 @@ void app_main(void)
         .atten = ADC_ATTEN_DB_12,
         .bitwidth = ADC_BITWIDTH_DEFAULT,
     };
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, POT_CHANNEL, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, THROTTLE_CHANNEL, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, STEERING_CHANNEL, &config));
+
+    int iteration = 0;
+
     while (1)
     {
-        int raw = 0;
-        ESP_ERROR_CHECK(adc_oneshot_read(adc_handle, POT_CHANNEL, &raw));
+        vTaskDelay(pdMS_TO_TICKS(UPDATE_FREQUENCY_MS));
 
-        int8_t throttle = (int8_t)((raw * 255 / 4095) - 128);
+        int raw_throttle = 0, raw_steering = 0;
+        ESP_ERROR_CHECK(adc_oneshot_read(adc_handle, THROTTLE_CHANNEL, &raw_throttle));
+        ESP_ERROR_CHECK(adc_oneshot_read(adc_handle, STEERING_CHANNEL, &raw_steering));
+
+        int8_t throttle = compute_throttle(raw_throttle);
+        int8_t steering = compute_steering(raw_steering);
+        if (!is_change_significant()) continue;
+
         control_packet_t pkt = {
-            .steering = 0, // fixed steering for now
-            .throttle = throttle};
+            .steering = steering,
+            .throttle = throttle
+        };
 
-        esp_now_send(broadcast_mac, (const uint8_t *)&pkt, sizeof(pkt));
-        ESP_LOGI(TAG, "Throttle raw=%d mapped=%d", raw, throttle);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        ESP_LOGI(TAG, "Throttle raw=%d mapped=%d. Steering raw=%d mapped %d", raw_throttle, throttle, raw_steering, steering);
+        esp_now_send(receiver_mac, (const uint8_t *)&pkt, sizeof(pkt));
     }
 }

@@ -40,7 +40,7 @@ void pwm_init(void)
     };
     ledc_channel_config(&servo_channel_conf);
 
-    ESP_LOGI(TAG, "PWM initialized: ESC on GPIO%d, Servo on GPIO%d", PWM_ESC_GPIO, PWM_SERVO_GPIO);
+    // ESP_LOGI(TAG, "PWM initialized: ESC on GPIO%d, Servo on GPIO%d", PWM_ESC_GPIO, PWM_SERVO_GPIO);
 }
 
 void set_pwm_pulsewidth_us(uint32_t channel, uint32_t pulse_width_us)
@@ -57,5 +57,5 @@ void set_pwm_pulsewidth_us(uint32_t channel, uint32_t pulse_width_us)
     ledc_set_duty(PWM_MODE, channel, duty);
     ledc_update_duty(PWM_MODE, channel);
 
-    ESP_LOGI(TAG, "Channel %u: %u us (duty=%u)", channel, pulse_width_us, duty);
+    // ESP_LOGI(TAG, "Channel %u: %u us (duty=%u)", channel, pulse_width_us, duty);
 }

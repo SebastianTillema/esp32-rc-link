@@ -3,9 +3,11 @@ idf_component_register(
         "receiver/receiver.c"
         "receiver/pwm.c"
         "transmitter/transmitter.c"
+        "transmitter/input_processing.c"
         "common/comm.c"
     INCLUDE_DIRS
         "receiver"
+        "transmitter"
         "common"
     REQUIRES
         driver
